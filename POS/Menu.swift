@@ -24,35 +24,6 @@ struct Item {
     }
 }
 
-struct Tax {
-    let id: String
-    let rate: NSDecimalNumber
-    //let conditions (on Item id and category)
-}
-
-struct Discount {
-    let id: String
-    let amountType: AmountType
-    let shouldApplyTaxBeforeDiscount: Bool
-    
-    enum AmountType {
-        case percentage(NSDecimalNumber)
-        case dollar(NSDecimalNumber)
-    }
-}
-
-struct Bill {
-    let subtotal: NSDecimalNumber
-    let discountTotal: NSDecimalNumber
-    let taxTotal: NSDecimalNumber
-    let total: NSDecimalNumber
-    let roundedTotal: NSDecimalNumber
-}
-
-func calcBill(items: [Item], discounts: [Discount], taxes: [Tax], roundToNearestAmount: NSDecimalNumber?) -> Bill {
-    return Bill(subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0, roundedTotal: 0)
-}
-
 func category(_ category: String) -> (String, NSDecimalNumber) -> Item {
     return { name, price in
         return Item(id: name,
@@ -87,3 +58,34 @@ let drinksCategory = [
     drinks("Orange Juice", 3.00),
     drinks("Beer", 5.00),
 ]
+
+/*
+struct Tax {
+    let id: String
+    let rate: NSDecimalNumber
+    //let conditions (on Item id and category)
+}
+
+struct Discount {
+    let id: String
+    let amountType: AmountType
+    let shouldApplyTaxBeforeDiscount: Bool
+
+    enum AmountType {
+        case percentage(NSDecimalNumber)
+        case dollar(NSDecimalNumber)
+    }
+}
+
+struct Bill {
+    let subtotal: NSDecimalNumber
+    let discountTotal: NSDecimalNumber
+    let taxTotal: NSDecimalNumber
+    let total: NSDecimalNumber
+    let roundedTotal: NSDecimalNumber
+}
+
+func calcBill(items: [Item], discounts: [Discount], taxes: [Tax], roundToNearestAmount: NSDecimalNumber?) -> Bill {
+    return Bill(subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0, roundedTotal: 0)
+}
+*/
