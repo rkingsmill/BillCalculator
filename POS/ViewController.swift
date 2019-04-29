@@ -29,6 +29,18 @@ class ViewController: UIViewController {
         menuTableView.delegate = self
         orderTableView.delegate = self
     }
+    
+    @IBAction func showTaxes() {
+        let vc = UINavigationController(rootViewController: TaxViewController(style: .grouped))
+        vc.modalPresentationStyle = .formSheet
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @IBAction func showDiscounts() {
+        let vc = UINavigationController(rootViewController: DiscountViewController(style: .grouped))
+        vc.modalPresentationStyle = .formSheet
+        present(vc, animated: true, completion: nil)
+    }
 }
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
