@@ -46,10 +46,10 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == menuTableView {
-            return viewModel.menuCategoryTitle(section: section)
+            return viewModel.menuCategoryTitle(in: section)
             
         } else if tableView == orderTableView {
-            return viewModel.orderTitle(section: section)
+            return viewModel.orderTitle(in: section)
         }
         
         fatalError()
@@ -67,10 +67,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == menuTableView {
-            return viewModel.numberOfMenuItems(section: section)
+            return viewModel.numberOfMenuItems(in: section)
             
         } else if tableView == orderTableView {
-            return viewModel.numberOfOrderItems(section: section)
+            return viewModel.numberOfOrderItems(in: section)
         }
         
         fatalError()
@@ -80,12 +80,12 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) ?? UITableViewCell(style: .value1, reuseIdentifier: cellIdentifier)
         
         if tableView == menuTableView {
-            cell.textLabel?.text = viewModel.menuItemName(indexPath: indexPath)
-            cell.detailTextLabel?.text = viewModel.menuItemPrice(indexPath: indexPath)
+            cell.textLabel?.text = viewModel.menuItemName(at: indexPath)
+            cell.detailTextLabel?.text = viewModel.menuItemPrice(at: indexPath)
             
         } else if tableView == orderTableView {
-            cell.textLabel?.text = viewModel.orderItemName(indexPath: indexPath)
-            cell.detailTextLabel?.text = viewModel.orderItemPrice(indexPath: indexPath)
+            cell.textLabel?.text = viewModel.labelForOrderItem(at: indexPath)
+            cell.detailTextLabel?.text = viewModel.orderItemPrice(at: indexPath)
         }
 
         return cell
@@ -96,6 +96,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             let indexPaths = [viewModel.addItemToOrder(at: indexPath)]
             orderTableView.insertRows(at: indexPaths, with: .automatic)
             // calculate bill totals
+        
+        } else if tableView == orderTableView {
+            viewModel.toggleTaxForOrderItem(at: indexPath)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
     
@@ -120,24 +124,19 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
 
 class ViewModel {
-    private struct Category {
-        let name: String
-        let items: [Item]
-    }
-    
-    private let categories = [
-        Category(name: "Appetizers", items: appetizersCategory),
-        Category(name: "Mains", items: mainsCategory),
-        Category(name: "Drinks", items: drinksCategory),
-    ]
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        return formatter
+    }()
     
     var orderItems: [Item] = []
     
-    func menuCategoryTitle(section: Int) -> String? {
+    func menuCategoryTitle(in section: Int) -> String? {
         return categories[section].name
     }
     
-    func orderTitle(section: Int) -> String? {
+    func orderTitle(in section: Int) -> String? {
         return "Order"
     }
     
@@ -145,28 +144,36 @@ class ViewModel {
         return categories.count
     }
     
-    func numberOfMenuItems(section: Int) -> Int {
+    func numberOfMenuItems(in section: Int) -> Int {
         return categories[section].items.count
     }
     
-    func numberOfOrderItems(section: Int) -> Int {
+    func numberOfOrderItems(in section: Int) -> Int {
         return orderItems.count
     }
     
-    func menuItemName(indexPath: IndexPath) -> String? {
+    func menuItemName(at indexPath: IndexPath) -> String? {
         return categories[indexPath.section].items[indexPath.row].name
     }
     
-    func menuItemPrice(indexPath: IndexPath) -> String? {
-        return categories[indexPath.section].items[indexPath.row].priceLabel
+    func menuItemPrice(at indexPath: IndexPath) -> String? {
+        let price = categories[indexPath.section].items[indexPath.row].price
+        return formatter.string(from: price)
     }
     
-    func orderItemName(indexPath: IndexPath) -> String? {
-        return orderItems[indexPath.row].name
+    func labelForOrderItem(at indexPath: IndexPath) -> String? {
+        let item = orderItems[indexPath.row]
+       
+        if item.isTaxExempt {
+            return "\(item.name) (No Tax)"
+        } else {
+            return item.name
+        }
     }
     
-    func orderItemPrice(indexPath: IndexPath) -> String? {
-        return orderItems[indexPath.row].priceLabel
+    func orderItemPrice(at indexPath: IndexPath) -> String? {
+        let price = orderItems[indexPath.row].price
+        return formatter.string(from: price)
     }
     
     func addItemToOrder(at indexPath: IndexPath) -> IndexPath {
@@ -177,5 +184,9 @@ class ViewModel {
     
     func removeItemFromOrder(at indexPath: IndexPath) {
         orderItems.remove(at: indexPath.row)
+    }
+    
+    func toggleTaxForOrderItem(at indexPath: IndexPath) {
+        orderItems[indexPath.row].isTaxExempt = !orderItems[indexPath.row].isTaxExempt
     }
 }
