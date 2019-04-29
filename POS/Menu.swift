@@ -37,36 +37,37 @@ let drinksCategory = [
     drinks("Water", 0),
     drinks("Pop", 2.00),
     drinks("Orange Juice", 3.00),
-    drinks("Beer", 5.00),
 ]
 
-/*
-struct Tax {
-    let id: String
-    let rate: NSDecimalNumber
-    //let conditions (on Item id and category)
-}
+let alcoholCategory = [
+    alcohol("Beer", 5.00),
+    alcohol("Cider", 6.00),
+    alcohol("Wine", 7.00),
+]
 
-struct Discount {
-    let id: String
-    let amountType: AmountType
-    let shouldApplyTaxBeforeDiscount: Bool
+let tax1 = (label: "Tax 1 (5%)", amount: 0.05, isEnabled: true)
+let tax2 = (label: "Tax 2 (8%)", amount: 0.08, isEnabled: true)
+let alcoholTax = (label: "Alcohol Tax (10%)", amount: 0.10, isEnabled: true)
 
-    enum AmountType {
-        case percentage(NSDecimalNumber)
-        case dollar(NSDecimalNumber)
-    }
-}
+let discount5Dollars = (label: "$5.00", amount: 5.00, isEnabled: false)
+let discount10Percent = (label: "10%", amount: 0.10, isEnabled: false)
+let discount20Percent = (label: "20%", amount: 0.20, isEnabled: false)
 
-struct Bill {
-    let subtotal: NSDecimalNumber
-    let discountTotal: NSDecimalNumber
-    let taxTotal: NSDecimalNumber
-    let total: NSDecimalNumber
-    let roundedTotal: NSDecimalNumber
-}
+var taxes = [
+    tax1,
+    tax2,
+    alcoholTax,
+]
 
-func calcBill(items: [Item], discounts: [Discount], taxes: [Tax], roundToNearestAmount: NSDecimalNumber?) -> Bill {
-    return Bill(subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0, roundedTotal: 0)
-}
-*/
+var discounts = [
+    discount5Dollars,
+    discount10Percent,
+    discount20Percent,
+]
+
+var categories = [
+    (name: "Appetizers", items: appetizersCategory),
+    (name: "Mains", items: mainsCategory),
+    (name: "Drinks", items: drinksCategory),
+    (name: "Alcohol", items: alcoholCategory),
+]
