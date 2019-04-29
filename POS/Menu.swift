@@ -8,37 +8,18 @@
 
 import Foundation
 
-struct Item {
-    let id: String
-    let name: String
-    let category: String
-    
-    var quantity: Int
-    var price: NSDecimalNumber
-    var isTaxExempt: Bool
-    
-    var priceLabel: String? {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        return formatter.string(from: price)
-    }
-}
+typealias Item = (name: String, category: String, price: NSDecimalNumber, isTaxExempt: Bool)
 
 func category(_ category: String) -> (String, NSDecimalNumber) -> Item {
     return { name, price in
-        return Item(id: name,
-                    name: name,
-                    category: category,
-                    quantity: 1,
-                    price: price,
-                    isTaxExempt: false)
+        return (name, category, price, false)
     }
 }
 
 let appetizers = category("Appetizers")
 let mains = category("Mains")
-let desserts = category("Desserts")
 let drinks = category("Drinks")
+let alcohol = category("Alcohol")
 
 let appetizersCategory = [
     appetizers("Nachos", 13.99),
