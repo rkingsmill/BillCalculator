@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import BillCalc
 
 typealias Item = (name: String, category: String, price: NSDecimalNumber, isTaxExempt: Bool)
 
@@ -15,6 +16,8 @@ func category(_ category: String) -> (String, NSDecimalNumber) -> Item {
         return (name, category, price, false)
     }
 }
+
+var billCalc = BillCalc(items: [], discounts: discounts, taxes: taxes)
 
 let appetizers = category("Appetizers")
 let mains = category("Mains")

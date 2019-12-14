@@ -8,11 +8,13 @@
 
 import Foundation
 import UIKit
+import BillCalc
 
 class DiscountViewController: UITableViewController {
     let cellIdentifier = "Cell"
     
     let viewModel = DiscountViewModel()
+    var didUpdateDiscounts: ((_ bill: Bill) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,10 +53,18 @@ extension DiscountViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.toggleDiscount(at: indexPath)
         tableView.reloadRows(at: [indexPath], with: .automatic)
+        if let didUpdateDiscounts = didUpdateDiscounts {
+            didUpdateDiscounts(viewModel.updatedBill)
+        }
     }
 }
 
-class DiscountViewModel {    
+class DiscountViewModel {
+    
+    var updatedBill: Bill {
+        return billCalc.update(discounts: discounts)
+    }
+    
     func title(for section: Int) -> String {
         return "Discounts"
     }

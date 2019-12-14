@@ -8,11 +8,13 @@
 
 import Foundation
 import UIKit
+import BillCalc
 
 class TaxViewController: UITableViewController {
     let cellIdentifier = "Cell"
     
     let viewModel = TaxViewModel()
+    var didUpdateTaxes: ((_ bill: Bill) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,10 +53,18 @@ extension TaxViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.toggleTax(at: indexPath)
         tableView.reloadRows(at: [indexPath], with: .automatic)
+        if let didUpdateTaxes = didUpdateTaxes {
+            didUpdateTaxes(viewModel.updatedBill)
+        }
     }
 }
 
 class TaxViewModel {
+    
+    var updatedBill: Bill {
+        return billCalc.update(taxes: taxes)
+    }
+    
     func title(for section: Int) -> String {
         return "Taxes"
     }

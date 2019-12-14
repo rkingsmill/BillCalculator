@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BillCalc
 
 class ViewController: UIViewController {
     let cellIdentifier = "Cell"
@@ -21,6 +22,7 @@ class ViewController: UIViewController {
     
     let viewModel = ViewModel()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,16 +30,28 @@ class ViewController: UIViewController {
         orderTableView.dataSource = self
         menuTableView.delegate = self
         orderTableView.delegate = self
+        
+        viewModel.didUpdateTotals = { subtotal, discounts, taxes, total in
+            self.subtotalLabel.text = subtotal
+            self.discountsLabel.text = discounts
+            self.taxLabel.text = taxes
+            self.totalLabel.text = total
+            self.view.reloadInputViews()
+        }
     }
     
     @IBAction func showTaxes() {
-        let vc = UINavigationController(rootViewController: TaxViewController(style: .grouped))
+        let taxVC = TaxViewController(style: .grouped)
+        taxVC.didUpdateTaxes = { bill in self.viewModel.updateTotals(with: bill) }
+        let vc = UINavigationController(rootViewController: taxVC)
         vc.modalPresentationStyle = .formSheet
         present(vc, animated: true, completion: nil)
     }
     
     @IBAction func showDiscounts() {
-        let vc = UINavigationController(rootViewController: DiscountViewController(style: .grouped))
+        let discountVC = DiscountViewController(style: .grouped)
+        discountVC.didUpdateDiscounts = { bill in self.viewModel.updateTotals(with: bill) }
+        let vc = UINavigationController(rootViewController: discountVC)
         vc.modalPresentationStyle = .formSheet
         present(vc, animated: true, completion: nil)
     }
@@ -95,12 +109,12 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         if tableView == menuTableView {
             let indexPaths = [viewModel.addItemToOrder(at: indexPath)]
             orderTableView.insertRows(at: indexPaths, with: .automatic)
-            // calculate bill totals
-        
+            
         } else if tableView == orderTableView {
             viewModel.toggleTaxForOrderItem(at: indexPath)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
+        viewModel.updateTotals(with: viewModel.updatedBill)
     }
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -117,13 +131,15 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         if tableView == orderTableView && editingStyle == .delete {
             viewModel.removeItemFromOrder(at: indexPath)
             orderTableView.deleteRows(at: [indexPath], with: .automatic)
-            // calculate bill totals
+            viewModel.updateTotals(with: viewModel.updatedBill)
         }
     }
 }
 
-
 class ViewModel {
+    
+    var didUpdateTotals: ((String, String, String, String) -> Void)?
+    
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -131,6 +147,10 @@ class ViewModel {
     }()
     
     var orderItems: [Item] = []
+    
+    var updatedBill: Bill {
+        return billCalc.update(items: orderItems)
+    }
     
     func menuCategoryTitle(in section: Int) -> String? {
         return categories[section].name
@@ -179,6 +199,7 @@ class ViewModel {
     func addItemToOrder(at indexPath: IndexPath) -> IndexPath {
         let item = categories[indexPath.section].items[indexPath.row]
         orderItems.append(item)
+        
         return IndexPath(row: orderItems.count - 1, section: 0)
     }
     
@@ -188,5 +209,11 @@ class ViewModel {
     
     func toggleTaxForOrderItem(at indexPath: IndexPath) {
         orderItems[indexPath.row].isTaxExempt = !orderItems[indexPath.row].isTaxExempt
+    }
+    
+    func updateTotals(with bill: Bill) {
+        if let didUpdateTotals = didUpdateTotals {
+            didUpdateTotals(formatter.string(from: bill.subtotal)!, formatter.string(from: bill.discounts)!, formatter.string(from: bill.taxes)!, formatter.string(from: bill.total)!)
+        }
     }
 }
