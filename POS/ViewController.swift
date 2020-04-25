@@ -22,7 +22,6 @@ class ViewController: UIViewController {
     
     let viewModel = ViewModel()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -183,12 +182,7 @@ class ViewModel {
     
     func labelForOrderItem(at indexPath: IndexPath) -> String? {
         let item = orderItems[indexPath.row]
-       
-        if item.isTaxExempt {
-            return "\(item.name) (No Tax)"
-        } else {
-            return item.name
-        }
+        return item.isTaxExempt ? "\(item.name) (No Tax)" : item.name
     }
     
     func orderItemPrice(at indexPath: IndexPath) -> String? {

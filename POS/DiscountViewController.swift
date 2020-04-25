@@ -84,11 +84,7 @@ class DiscountViewModel {
     
     func accessoryType(at indexPath: IndexPath) -> UITableViewCell.AccessoryType {
         let discount = discounts[indexPath.row]
-        if discount.isEnabled {
-            return .checkmark
-        } else {
-            return .none
-        }
+        return discount.isEnabled ? .checkmark : .none
     }
     
     func toggleDiscount(at indexPath: IndexPath) {

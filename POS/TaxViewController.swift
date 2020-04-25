@@ -84,11 +84,7 @@ class TaxViewModel {
     
     func accessoryType(at indexPath: IndexPath) -> UITableViewCell.AccessoryType {
         let tax = taxes[indexPath.row]
-        if tax.isEnabled {
-            return .checkmark
-        } else {
-            return .none
-        }
+        return tax.isEnabled ? .checkmark : .none
     }
     
     func toggleTax(at indexPath: IndexPath) {

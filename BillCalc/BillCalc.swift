@@ -40,5 +40,3 @@ public struct BillCalc {
         return Bill(subtotal: calculator.billSubtotal, discounts: calculator.totalDiscounts, taxes: calculator.totalTaxes, total: calculator.billTotal)
     }
 }
-
-//items to own categories and taxes?

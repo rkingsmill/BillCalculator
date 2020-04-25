@@ -9,6 +9,7 @@
 import Foundation
 
 internal struct Calculator {
+    internal var taxes: [Tax]!
     
     internal var items: [Item] {
         didSet {
@@ -16,12 +17,12 @@ internal struct Calculator {
         }
     }
     
-    internal var taxes: [Tax]!
     internal var discounts: [Discount] {
         didSet {
             "Discounts set"
         }
     }
+    
     private var categories: [Category]! {
         didSet {
             updateTaxes()

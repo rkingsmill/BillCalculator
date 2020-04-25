@@ -147,13 +147,13 @@
 			isa = PBXGroup;
 			children = (
 				6AEC0FD3226F8639005F8B6B /* BillCalc.h */,
-				9BC36666227E1C8600458F6D /* Item.swift */,
-				9BC36668227E1C9200458F6D /* Tax.swift */,
-				9BC3666A227E1CA500458F6D /* Discount.swift */,
-				9BC3666C227E210300458F6D /* Calculator.swift */,
+				6AEC0FD4226F8639005F8B6B /* Info.plist */,
 				9BC3666E227E8E0700458F6D /* Bill.swift */,
 				9BC36670227E8ECF00458F6D /* BillCalc.swift */,
-				6AEC0FD4226F8639005F8B6B /* Info.plist */,
+				9BC3666C227E210300458F6D /* Calculator.swift */,
+				9BC3666A227E1CA500458F6D /* Discount.swift */,
+				9BC36666227E1C8600458F6D /* Item.swift */,
+				9BC36668227E1C9200458F6D /* Tax.swift */,
 			);
 			path = BillCalc;
 			sourceTree = "<group>";
